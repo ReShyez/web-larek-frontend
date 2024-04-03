@@ -12,6 +12,9 @@ export interface IEvents {
     emit<T extends object>(event: string, data?: T): void;
     trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
+export interface IClickEvent {
+    onClick(evt?: MouseEvent): void;
+}
 
 /**
  * Брокер событий, классическая реализация
