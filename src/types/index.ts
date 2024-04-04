@@ -1,17 +1,18 @@
-export type Url = string
-export type Text = string;
-export type Cost = number;
+
 export type ChooseItems = Pick<IBaseItem, 'id' | 'name' | 'price' | 'index'>
-export type PayMethod = 'cash' | 'card'
+export enum PayMethod {
+  Cash = 'Наличные',
+  Card = 'Банковская карта'
+  }
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export interface IBaseItem {
   id: string;
   description?: Text;
-  image: Url;
+  image: string;
   name: Text;
   category: Text;
-  price: Cost | null;
+  price: number | null;
   button: boolean;
   index?: number;
 }
@@ -38,7 +39,7 @@ export interface IOrder {
     phone: Text;
     email: Text;
     address: Text;
-    totalCost: Cost;
+    totalCost: number;
 }
 
 export interface IPostOrder extends IOrder {
@@ -47,7 +48,7 @@ export interface IPostOrder extends IOrder {
 
 export interface IOrderResult {
   id: string;
-  total: Cost;
+  total: number;
 }
 
 
@@ -60,7 +61,7 @@ export interface IFormState {
 export interface ICongradulateWindow {
   finnlyCoast: HTMLParagraphElement;
   closeButton: HTMLButtonElement;
-  setCoast(value: Cost):void;
+  setCoast(value: number):void;
   closeWindow():void;
 }
 
@@ -92,7 +93,7 @@ export interface AppState {
   checkChoose(id: string): boolean;
   getBusket():HTMLElement;
   clearBasket():void;
-  getResult(): Cost;
+  getResult(): number;
   setOrder(): IOrder;
   choosePay(value:Text): void;
   setAdress(value: Text): void;

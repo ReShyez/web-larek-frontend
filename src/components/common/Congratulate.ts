@@ -1,7 +1,7 @@
 import { View } from "../base/View";
 import { ensureElement } from "../../utils/utils";
 import { IClickEvent } from "../base/events";
-import { ICongradulateWindow, Cost } from "../../types";
+import { ICongradulateWindow,} from "../../types";
 
 export class CongradulateWindow extends View<ICongradulateWindow> {
   protected finnlyCoast: HTMLParagraphElement;
@@ -20,7 +20,7 @@ export class CongradulateWindow extends View<ICongradulateWindow> {
     
   }
   
-  setCoast(value: Cost):void{
+  setCoast(value: number):void{
     this.setText(this.finnlyCoast, `Списано ${value}`)
   }
 
