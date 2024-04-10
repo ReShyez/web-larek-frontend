@@ -7,13 +7,13 @@ export class CongradulateWindow extends View<ICongradulateWindow> {
   protected finnlyCoast: HTMLParagraphElement;
   protected closeButton: HTMLButtonElement;
 
-  constructor (protected template: HTMLElement, coast: number, event: IClickEvent) {
+  constructor (protected template: HTMLElement, coast: number, event?: IClickEvent) {
     super(template);
     this.finnlyCoast = ensureElement<HTMLParagraphElement>('.order-success__description', template);
     this.closeButton = ensureElement<HTMLButtonElement>('.order-success__close', template);
     
     //отслеживаем - если произошли какие то события клика то выполняем действия
-    if(event.onClick){
+    if(event?.onClick){
       this.setCoast(coast);
       this.closeButton.addEventListener('click', () => this.closeWindow())
     }

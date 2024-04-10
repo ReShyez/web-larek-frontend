@@ -1,34 +1,30 @@
 //Типы исправил. По UML схеме - правильно ли я понял что неправильно наследование указал? Нужно было в обратном порядке стрелку рисовать от потомка к родителю? 
-
-
-export type ChooseItems = Pick<IBaseItem, 'id' | 'name' | 'price' | 'index'>
+export type ChooseItems = Pick<IBaseItem, 'id' | 'title' | 'price'>
 export enum PayMethod {
-  Cash = 'Наличные',
-  Card = 'Банковская карта'
+  Cash = 'cash',
+  Card = 'online'
   }
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export interface IBaseItem {
   id: string;
-  description?: Text;
-  image: string;
-  name: Text;
-  category: Text;
+  description?: string;
+  image?: string;
+  title?: string;
+  category?: string;
   price: number | null;
   button: boolean;
-  index?: number;
+  index?: number
 }
 
 export interface ICard extends IBaseItem {
-  Button: string;
+  buyButton?: string;
 }
 
 export interface IBasket {
   items: HTMLElement[];
 	total: number;
 }
-
-
 
 export interface IPage {
   counter: number;
@@ -37,14 +33,14 @@ export interface IPage {
 }
 
 export interface IOrder {
-    payment: PayMethod;
-    phone: Text;
-    email: Text;
-    address: Text;
-    totalCost: number;
+    payment: string;
+    address: string;
+    email: string;
+    phone: string;
 }
 
 export interface IPostOrder extends IOrder {
+  totalCost: number;
   items: string[]
 }
 
@@ -61,10 +57,7 @@ export interface IFormState {
 
 
 export interface ICongradulateWindow {
-  finnlyCoast: HTMLParagraphElement;
-  closeButton: HTMLButtonElement;
-  setCoast(value: number):void;
-  closeWindow():void;
+  total: number;
 }
 
 
@@ -81,18 +74,19 @@ export type IApiListResp<Type> = {
   items: Type[]
 }
 
-export interface AppState {
+export interface IAppState {
   catalog: ICard[];
   basket: ChooseItems[];
   preview: string | null;
   order: IOrder | null;
   formErrors: FormErrors;
 
-  setCatalog(items: ICard[]):void;
+  setCatalog(items: ICard[]):void; 
   setPreview(item: IBaseItem): void;
   buyItem(item: IBaseItem): void;
   deleteItem(id:string):void;
   checkChoose(id: string): boolean;
+  checkItem(item: ICard): boolean;
   getBusket():HTMLElement;
   clearBasket():void;
   getResult(): number;

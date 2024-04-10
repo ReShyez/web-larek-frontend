@@ -4,7 +4,7 @@ import { IApi, IApiListResp } from "../types/index";
 export class APILarek extends Api implements IApi {
   readonly cdn: string;
 
-  constructor(cdn: string, baseUrl: string, options: RequestInit) {
+  constructor(cdn: string, baseUrl: string, options?: RequestInit) {
     super(baseUrl, options);
     this.cdn = cdn;
   }
