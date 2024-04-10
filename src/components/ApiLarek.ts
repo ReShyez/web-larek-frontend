@@ -29,3 +29,4 @@ export class APILarek extends Api implements IApi {
     return this.post('/order/', order).then((data: IOrderResult) => data)
   }
 }
+

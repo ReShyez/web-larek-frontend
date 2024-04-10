@@ -27,6 +27,7 @@ export class Form<T> extends View<IFormState> {
       this.container.addEventListener('submit', (e: Event) => {
           e.preventDefault();
           this.events.emit(`${this.container.name}:submit`);
+          console.log(`${this.container.name}:submit`)
       });
   }
 

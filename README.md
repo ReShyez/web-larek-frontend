@@ -59,13 +59,9 @@ yarn build
 
 Типы данных
 ```
- type Url = string - тип данных подсказка, для URL адресов
 
- type Text = string; - тип данных подсказка Текст
- type Cost = number; - тип данных подсказка Стоимость
 
- type ChooseItems = Pick<IBaseItem, 'id' | 'name' | 'price' | 'index'> - тип данных описывающий выборку свойтсв из интерфеса  IBaseItem
- type PayMethod = 'cash' | 'card' - тип данных описывающий способ оплаты
+ type ChooseItems = Pick<IBaseItem, 'id' | 'name' | 'price' | 'index'> - тип данных описывающий выборку свойтсв из интерфеса  IBaseItem предназначен для типизации данных о товаре в корзине 
 
  type FormErrors = Partial<Record<keyof IOrder, string>>; -- тип данных описывающий ошибки формы
 
@@ -193,31 +189,24 @@ interface IFormState {
     order: IOrder | null;
     formErrors: FormErrors;
 
-    setCatalog(items: ICard[]):void;
-    setPreview(item: IBaseItem): void;
-    buyItem(item: IBaseItem): void;
-    deleteItem(id:string):void;
-    checkChoose(id: string): boolean;
-    getBusket():HTMLElement;
-    clearBasket():void;
-    getResult(): Cost;
-    setOrder(): IOrder;
-    choosePay(value:Text): void;
-    setAdress(value: Text): void;
-    setContact(field: keyof Pick<IOrder, 'email' | 'phone'>, value: string): void
-    clearOrder(): void;
-    checkDelyveryReady(): void;
-    checkOrderReady(): void;
-    validataDelyvery(): void;
-    validateContact(): void;
+
     }
     ```
 
-Благодаря своим методам он может обрабатывать поступающую информацию что бы в Презенторе можно было объеденить  
-Посмотреть его методы можно на UML схеме
-
-
-
+    Обладает следующими методами 
+    setCatalog(items: LotItem[]) - для утстановки карточек на главной странице
+    addItem(item: LotItem) - для добавления в корзину
+    removeItem(item: IBaseItem) - для удаления из корзины
+    getScore() - для получения количества товаров в корзине
+    getCost(): number - для получения общей стоимости товаров
+    setPayment(value: string) -для выбора способа оплаты (устанавливает значение в order.payment)
+    validateDelivery() - валидация адреса доставки
+    validateContacts() - валидация контактов
+    setAddressField<T extends keyof IOrder>(field: T, value: IOrder[T]) - установки адреса доставки
+    setContactsField<T extends keyof IOrder>(field: T, value: IOrder[T])
+     pushToOrder() - добавляет товар в форму заказа
+     clearBasket() - очищает корзину
+     clearAll() - очищает все данные ( заказ + корзина)
 ## Классы для работы с отображением 
 
  ### Переиспользуемые сущности
@@ -232,17 +221,9 @@ interface IFormState {
     }
     ```
 
-### Congratulate 
+### Success
 Класс сообщения об успешной оплате
-Реализует и интерфейс 
-    ```
-    interface ICongradulateWindow {
-    finnlyCoast: HTMLParagraphElement;
-    closeButton: HTMLButtonElement;
-    setCoast(value: Cost):void;
-    closeWindow():void;
-    }
-    ```
+Наследует класс View c дженериком IBasketView
 
 ### Класс PopUp
 Класс попапа, окна на котором будет размещаться подробнрая информация о товаре, корзина, форма заказа и тип
@@ -278,7 +259,7 @@ interface IFormState {
 
     ```
     interface IOrder {
-        payment: PayMethod;
+        payment: string;
         phone: Text;
         email: Text;
         address: Text;
@@ -304,19 +285,8 @@ interface IFormState {
 
 
 ### Класс Card
-Класс для реализации отображения карточки
-Наследует класс View с типом данных ICard
+Класс для реализации отображения карточки. Наследует класс View с дженериком интерфейса ICard
 
-    ```
-    interface ICard extends IBaseItem {
-    button: HTMLElement;
-    }
-    ```
-
-### Класс ChooseItem
-Класс для реализации товаров в корзине
-Наследует класс View с типом данных ChooseItems
-
-```
- type ChooseItems = Pick<IBaseItem, 'id' | 'name' | 'price' | 'index'>
-``` 
+В ходе разработки было принято решение не разделять карточку на основную, карточку для превью и карточку корзины.
+У класса карточки были выделены 2 осовных свойства которые присутствуют на протяжении всего цикла жизни карточки. А именно Цена(price) и название (title)
+а также добавлен метод удаляющий карточку из разметки (ps - сделано из за того что при удалении карточки из корзины, карточка не удалялась из разметки)

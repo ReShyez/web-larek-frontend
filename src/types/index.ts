@@ -40,7 +40,7 @@ export interface IOrder {
 }
 
 export interface IPostOrder extends IOrder {
-  totalCost: number;
+  total: number;
   items: string[]
 }
 

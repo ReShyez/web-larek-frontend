@@ -9,13 +9,13 @@ export type CatalogChangeEvent = {
 
 export class AppState extends Model<IAppState> {
   catalog: IBaseItem[] = [];
-  basket: IBaseItem[] = [];
+  basket: ChooseItems[] = [];
   order: IPostOrder = {
     payment: 'online',
     phone: '',
     email: '',
     address: '',
-    totalCost: 0,
+    total: 0,
     items: []
   };
   preview: string | null;
@@ -26,10 +26,6 @@ export class AppState extends Model<IAppState> {
     this.emitChanges('smallCard:view', { catalog: this.catalog })
   }
   
-  checkItem(item: LotItem): boolean {
-    return this.basket.includes(item);
-  }
-
   addItem(item: LotItem) {
     this.basket.push(item);
     this.emitChanges('chooselist:chenged');
@@ -42,7 +38,7 @@ export class AppState extends Model<IAppState> {
     this.emitChanges('chooselist:chenged');
   }
 
-  getScore(){
+  getScore(): number {
     return this.basket.length;
   }
 
@@ -86,7 +82,7 @@ export class AppState extends Model<IAppState> {
       return Object.keys(errors).length === 0;
   }
 
-  setDeliveryField<T extends keyof IOrder>(field: T, value: IOrder[T]) {
+  setAddressField<T extends keyof IOrder>(field: T, value: IOrder[T]) {
       this.order[field] = value;
       console.log(this.order)
       if (this.validateDelivery()) {
@@ -102,9 +98,26 @@ export class AppState extends Model<IAppState> {
       }
   }
   
-  pushToOrder(){
+  pushToOrder() {
+    this.order.total = this.getCost()
     this.basket.map((item)=> {
-      this.order.items.push(item.title);
+      this.order.items.push(item.id);
     })
+  }
+  
+  clearBasket() {
+    this.basket = [];
+  }
+
+  clearAll(){
+    this.clearBasket();
+    this.order = {
+      payment: 'online',
+      phone: '',
+      email: '',
+      address: '',
+      total: 0,
+      items: []
+    }
   }
 }

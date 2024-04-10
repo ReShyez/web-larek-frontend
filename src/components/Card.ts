@@ -67,6 +67,7 @@ export class Card extends View<ICard> {
     }
     set category(value: string) {
       this.setText(this._category, value);
+      this._category.classList.add(categoryClassList[value])
     }
     set price(value: number) {
       if(value === null) {
@@ -88,3 +89,11 @@ export class Card extends View<ICard> {
       this._index = null;
     }
 }  
+
+const categoryClassList: Record<string, string> = {
+  "софт-скил": "card__category_soft",
+  "другое": "card__category_other",
+  "дополнительное": "card__category_additional",
+  "кнопка": "card__category_button",
+  "хард-скил": "card__category_hard"
+}

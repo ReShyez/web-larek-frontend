@@ -10,7 +10,7 @@ export class Delivery extends Form<IOrder> {
         this.payButtons = Array.from(container.querySelectorAll('.button_alt'))
         this.payButtons.forEach((el) => {
           el.addEventListener('click', () => {
-            this.setPayment(el.name);
+            this.setPayMethod(el.name);
             events.emit('pay:change', { name: el.name });
           });
         })

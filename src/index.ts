@@ -12,7 +12,7 @@ import { Basket } from './components/common/Basket';
 import { Contact } from './components/Contacts';
 import { IOrder, PayMethod } from './types';
 import { Delivery } from './components/Delyvery';
-import { CongradulateWindow } from './components/common/Congratulate';
+import { Success } from './components/common/Congratulate';
 //Получаем все эл. главной страницы страницы
 const catalogItemTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const previewItemTemplate = ensureElement<HTMLTemplateElement>('#card-preview')
@@ -65,11 +65,7 @@ events.on('item:select', (item: LotItem) => {
   const pickItem = (item: LotItem) => {
     const card = new Card(cloneTemplate(previewItemTemplate), {
       onClick: () => {
-        if(appData.checkItem(item)) {
-          events.emit('item:delete', item);
-        } else {
           events.emit('item:add', item);
-        }
       }
     });
     popup.render({
@@ -98,10 +94,6 @@ events.on('item:add', (item: LotItem) => {
 
   popup.close();
 });
-
-
-
-
 
 events.on('item:delete',(item: LotItem) => {
   appData.removeItem(item);
@@ -158,7 +150,7 @@ events.on(/^contacts\..*:change/, (data: { field: keyof IOrder, value: string })
 });
 
 events.on('delivery.address:change', (data: { field: keyof IOrder, value: string }) => {
-  appData.setDeliveryField(data.field, data.value);
+  appData.setAddressField(data.field, data.value);
 });
 
 events.on('pay:change',(event: { name: string }) => {
@@ -176,22 +168,28 @@ events.on('delivery:submit', () => {
   })
 })
 
-events.on('order:submit', () => {
-  api.orderLots(appData.order)
-      .then((result) => {
-          const congradulate = new CongradulateWindow(cloneTemplate(congradTempl)), {
+events.on('contacts:submit', () => {
+  api.takeOrder(appData.order)
+      .then((res) => {
+          const success = new Success(cloneTemplate(congradTempl), {
               onClick: () => {
                   popup.close();
-                  appData.clearData();
-                  events.emit('auction:changed');
+                  appData.clearBasket();
+                  
               }
           });
-
-          modal.render({
-              content: success.render({})
+          popup.render({
+              content: success.render({
+                total: appData.getCost()
+              })
           });
       })
-      .catch(err => {
+      .catch((err) => {
           console.error(err);
-      });
+      })
+      .finally(()=>{
+        appData.clearAll()
+        basket.items = [];
+        page.counter = 0;
+      })
 });

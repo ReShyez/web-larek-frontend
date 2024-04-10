@@ -3,31 +3,25 @@ import { ensureElement } from "../../utils/utils";
 import { IClickEvent } from "../base/events";
 import { ICongradulateWindow,} from "../../types";
 
-export class CongradulateWindow extends View<ICongradulateWindow> {
-  protected finnlyCoast: HTMLParagraphElement;
-  protected closeButton: HTMLButtonElement;
 
-  constructor (protected template: HTMLElement, coast: number, event?: IClickEvent) {
-    super(template);
-    this.finnlyCoast = ensureElement<HTMLParagraphElement>('.order-success__description', template);
-    this.closeButton = ensureElement<HTMLButtonElement>('.order-success__close', template);
-    
-    //отслеживаем - если произошли какие то события клика то выполняем действия
-    if(event?.onClick){
-      this.setCoast(coast);
-      this.closeButton.addEventListener('click', () => this.closeWindow())
-    }
-    
-  }
-  
-  setCoast(value: number):void{
-    this.setText(this.finnlyCoast, `Списано ${value}`)
-  }
-
-  closeWindow() {
-    this.setDisabled(this.template, true)
-    this.setText(this.finnlyCoast, ' ')
-  }
-
+interface ISuccess {
+  total: number;
 }
 
+
+export class Success extends View<ISuccess> {
+  protected _close: HTMLElement;
+  _total: HTMLSpanElement;
+  constructor(container: HTMLElement, actions: IClickEvent) {
+      super(container);
+      this._total = ensureElement<HTMLElement>('.order-success__description', this.container)
+      this._close = ensureElement<HTMLElement>('.order-success__close', this.container);
+
+      if (actions?.onClick) {
+          this._close.addEventListener('click', actions.onClick);
+      }
+  }
+  set total(value:null){
+    this._total.textContent = `${value} синапсов`
+  }
+}
