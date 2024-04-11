@@ -65,9 +65,14 @@ events.on('item:select', (item: LotItem) => {
   const pickItem = (item: LotItem) => {
     const card = new Card(cloneTemplate(previewItemTemplate), {
       onClick: () => {
-          events.emit('item:add', item);
+          if(appData.checkBasket(item)){
+            events.emit('item:delete', item);
+          } else {
+            events.emit('item:add', item);
+          }
       }
     });
+    card.checkBasket = appData.checkBasket(item)
     popup.render({
       content: card.render({
         title: item.title,
@@ -86,6 +91,9 @@ events.on('item:select', (item: LotItem) => {
     .then(() => {
       pickItem(item)
     })
+    .catch((err) => {
+      console.error(err);
+  })
   }
 });
 

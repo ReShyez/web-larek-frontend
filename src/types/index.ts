@@ -1,4 +1,3 @@
-//Типы исправил. По UML схеме - правильно ли я понял что неправильно наследование указал? Нужно было в обратном порядке стрелку рисовать от потомка к родителю? 
 export type ChooseItems = Pick<IBaseItem, 'id' | 'title' | 'price'>
 export enum PayMethod {
   Cash = 'cash',

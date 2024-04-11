@@ -109,6 +109,10 @@ export class AppState extends Model<IAppState> {
     this.basket = [];
   }
 
+  checkBasket(item: LotItem) {
+    return this.basket.includes(item);
+  }
+
   clearAll(){
     this.clearBasket();
     this.order = {

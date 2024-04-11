@@ -48,12 +48,6 @@ yarn build
 
 
 
-
-
-
-
-
-
 ## Типы данных и интерфейски использующиеся в проекте.
 Посмотреть список всех типов данных и интрфейсов можно а папке /types/index.ts
 
@@ -161,6 +155,10 @@ interface IFormState {
   takeOrder: (order: IOrder) => Promise<IOrderResult>
 }
 ```
+Имеет методы:
+getItem: (id:string) - для получения информации одного товара с сервера
+getLots: () - для получения всех товаров с сервера
+takeOrder: (order: IOrder) - для отправки запросов на сервер
 
 ### Класс LotItem
 Этот класс реализует данные карточки, наследует абстрактный класс Model с интерфейсом IBaseItem. Нужен для получения типизированного объекта карточки
@@ -181,6 +179,7 @@ interface IFormState {
     ### Класс AppData
 
 Данный класс предназначен для для работы с данными на странице, он наследует Model с интерфейсом IBaseItem и реализует интерфейс 
+    
     ```
     interface AppState {
     catalog: ICard[];
@@ -192,6 +191,11 @@ interface IFormState {
 
     }
     ```
+    Имеет свойства:
+    catalog: IBaseItem[] - каталог товаров
+    basket: ChooseItems[] - товары в корзине
+    order: IPostOrder - информация о заказе
+    formErrors: FormErrors - данные из ошибок форм
 
     Обладает следующими методами 
     setCatalog(items: LotItem[]) - для утстановки карточек на главной странице
@@ -207,6 +211,7 @@ interface IFormState {
      pushToOrder() - добавляет товар в форму заказа
      clearBasket() - очищает корзину
      clearAll() - очищает все данные ( заказ + корзина)
+     checkBasket(item: LotItem) - для проверки наличия товара в корзине
 ## Классы для работы с отображением 
 
  ### Переиспользуемые сущности
@@ -220,10 +225,18 @@ interface IFormState {
         total: number;
     }
     ```
-
+    имеет свойства:
+        _list: HTMLElement; - контейнер спискa товаров добавленных в корзину
+        _total: HTMLElement; - сумма заказа
+        _button: HTMLElement; - кнопка 
 ### Success
 Класс сообщения об успешной оплате
 Наследует класс View c дженериком IBasketView
+Имеет следующие свойства
+    _close: HTMLElement - кнопка закрытия
+    _total: HTMLSpanElement; - итоговая сумма
+
+имеет сеттер total - для установки итоговой цены
 
 ### Класс PopUp
 Класс попапа, окна на котором будет размещаться подробнрая информация о товаре, корзина, форма заказа и тип
@@ -241,7 +254,13 @@ interface IFormState {
 
     }
     ```
+    Имеет свойства:
+      _closeButton: HTMLButtonElement - кнопка закрытия 
+      _content: HTMLElement - контент который будем размещать в попап
 
+    open(): void; - открытие попапа
+    close(): void; - закрытие попапа
+    render(): void - создание попапа
 
 ### Класс Form 
     Шаблонный класс реализующий форму наследует Базовый класс View c интерфейсом 
@@ -251,6 +270,19 @@ interface IFormState {
     errors: string[];
     }
     ```
+
+    имеет свойства:
+      _submit: HTMLButtonElement; - кнопка отправки
+      _errors: HTMLElement; - поле для ошибок
+
+    Имеет сеттеры:
+    valid(value: boolean)
+    errors(value: string)
+    для проверки на валидность формы
+
+    Имеет методы
+    onInputChange(field: keyof T, value: string) - защищенный метод для эмитирования события
+     render(state: Partial<T> & IFormState) - для создания формы
 
 ### Классы Delyvery и Contact
     Наследуют класс Form c типом данных IOrder
@@ -269,7 +301,19 @@ interface IFormState {
     ```
 
 
+        Delyvery:
+        имеет защищенные свойства:
+            addressInput: HTMLInputElement; - поле ввода адреса
+            payButtons: HTMLButtonElement[];- массив с кнопками выбора оплаты
 
+        Имеет сеттер address(value: string) - для установки адреса
+        и метод  setPayMethod(name: string) - для выбора способа оплаты
+
+        Contact:
+            phoneInpit: HTMLInputElement - поле ввода телефона
+            emailInput: HTMLInputElement -  поле ввода почты
+        имеет сеттеры для установки значений в поля почты и телефона 
+    
 ### Класс Page 
 Шаблонный класс для работы с отображение главной страницы
 наследует View с типом данных IPage
@@ -282,7 +326,13 @@ interface IFormState {
     }
     ```
 
-
+    имеет свойства     
+    itemCount: HTMLSpanElement - счетчик товаров в корзине
+    catalogList: HTMLDivElement - элемент списка товаров
+    wrapper: HTMLElement - обёртка
+    basket: HTMLElement - элемент корзины
+    
+    Имеют сеттеры для установки значений в каталог, счетчик и для блокировки страницы
 
 ### Класс Card
 Класс для реализации отображения карточки. Наследует класс View с дженериком интерфейса ICard
@@ -290,3 +340,15 @@ interface IFormState {
 В ходе разработки было принято решение не разделять карточку на основную, карточку для превью и карточку корзины.
 У класса карточки были выделены 2 осовных свойства которые присутствуют на протяжении всего цикла жизни карточки. А именно Цена(price) и название (title)
 а также добавлен метод удаляющий карточку из разметки (ps - сделано из за того что при удалении карточки из корзины, карточка не удалялась из разметки)
+
+Имеет защищенные свойства  
+  _description?: HTMLElement;  - описание товара
+  _image?: HTMLImageElement; - картинка товара 
+  _title: HTMLElement; - название товара
+  _category?: HTMLSpanElement; - категория (выглядит как бейдж на карточке)
+  _price: HTMLSpanElement; - цена товара
+  _button?: HTMLButtonElement; - кнопка в карточке товара 
+  _index?: HTMLSpanElement; - индекс в списке товаров
+
+  Имеет сеттеры для установки значений в свои элементы
+  имеет метод delete() - для удаления карточки из разметки

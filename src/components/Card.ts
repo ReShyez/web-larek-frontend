@@ -9,7 +9,7 @@ export class Card extends View<ICard> {
   protected _title: HTMLElement;
   protected _category?: HTMLSpanElement;
   protected _price: HTMLSpanElement;
-  protected _button?: HTMLButtonElement;
+  _button?: HTMLButtonElement;
   protected _index?: HTMLSpanElement;
   constructor(container:HTMLElement, event:IClickEvent) {
     super(container);
@@ -72,10 +72,14 @@ export class Card extends View<ICard> {
     set price(value: number) {
       if(value === null) {
         this.setText(this._price, `Бесценно`);
+        this.setDisabled(this._button, true);
       } else {
         this.setText(this._price, `${value} синапсов`);
       }
       
+    }
+    set checkBasket(check: boolean) {
+      this._button.textContent = check ? "Удалить" : "В корзину";
     }
     delete() {
       if(this.container.parentNode) {
