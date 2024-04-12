@@ -67,6 +67,7 @@ events.on('item:select', (item: LotItem) => {
       onClick: () => {
           if(appData.checkBasket(item)){
             events.emit('item:delete', item);
+            popup.close();
           } else {
             events.emit('item:add', item);
           }
