@@ -99,12 +99,13 @@ events.on('item:select', (item: LotItem) => {
 
 events.on('item:add', (item: LotItem) => {
   appData.addItem(item);
-
+  console.log(appData.basket);
   popup.close();
 });
 
 events.on('item:delete',(item: LotItem) => {
   appData.removeItem(item);
+  console.log(appData.basket);
 });
 
 events.on('basket:open',() => {
